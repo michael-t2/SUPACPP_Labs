@@ -3,6 +3,7 @@
 #include <cmath>
 #include <vector>
 #include "CustomFunctions.h"
+#include "AnalyseData.h"
 
 float mag_2d(float x, float y){
 
@@ -24,7 +25,6 @@ std::vector<float> read_in_coords(std::string Path, int num_to_read){
         if(i == 0){
             continue;
         }
-        std::cout << datavalue << std::endl; 
         x = std::stof(datavalue.substr(0, datavalue.find(delim)));
         y = std::stof(datavalue.substr(datavalue.find(delim)+1, datavalue.length()));
         coords.push_back(x);
@@ -51,6 +51,23 @@ std::vector<float> read_in_coords(std::ifstream &datafile){
     }
     return coords;
 
+}
+
+void print_vals(std::vector<float> values, int num_per_line)
+{
+        if(values.size() == 1){ std::cout << values[0] << std::endl; return;};
+        for(int i=0; i < values.size(); i+=num_per_line){
+            int j = 0;
+            while(j < num_per_line){
+                if(j+1 > values.size()){
+                    break;
+                };
+                std::cout << values[i+j] << ", ";
+                 j++;
+            }
+            std::cout << std::endl;
+        }
+    return;
 }
 
 void print_vals(std::vector<std::string> values){
@@ -126,7 +143,6 @@ float chi_2_ndof(std::vector<float> coords,std::vector<float> errors, float grad
             float expec = grad*coords[i] + c;
             float err = pow(errors[i]+ errors[i+1],2);
             chi_2 += pow(coords[i+1]- expec, 2)/err;
-            std::cout << pow(coords[i+1]- expec, 2)/err << std::endl;
     }
 
     return chi_2/(coords.size()/2 - 2);

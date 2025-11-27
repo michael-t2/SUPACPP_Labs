@@ -13,3 +13,4 @@ std::vector<float> read_in_coords(std::ifstream &datafile);
 void fit_line(std::ifstream &file);
 float chi_2_ndof(std::vector<float> coords,std::vector<float> errors, float grad, float c);
 float recur_xy(float x, float y);
+void print_vals(std::vector<float> values, int num_per_line);
