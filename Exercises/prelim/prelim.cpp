@@ -1,6 +1,6 @@
 
 # include <iostream>
-# include <math.h>
+# include <cmath>
 
 float mag_2d(float x, float y);
 
@@ -20,5 +20,5 @@ int main ()
 
 float mag_2d (float x, float y){
 
-    return sqrt(x*x + y*y);
+    return sqrt(pow(x,2) + pow(y,2));
 }
