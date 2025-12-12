@@ -3,7 +3,7 @@
 #include <vector>
 #include "FiniteFunctions.h"
 #include <filesystem> //To check extensions in a nice way
-
+#include <random>
 #include "gnuplot-iostream.h" //Needed to produce plots (not part of the course) 
 
 using std::filesystem::path;
@@ -55,6 +55,39 @@ double FiniteFunction::rangeMax() {return m_RMax;};
 */ 
 double FiniteFunction::invxsquared(double x) {return 1/(1+x*x);};
 double FiniteFunction::callFunction(double x) {return this->invxsquared(x);}; //(overridable)
+/*
+###################
+Sampling from sistribution using metropolis algorithm)
+###################
+*/ 
+
+  std::vector<double> FiniteFunction::metroSample(double sigma, int NumSamples){
+    std::vector<double> SampledPoints;
+    std::default_random_engine generator;
+
+    std::uniform_real_distribution<double> dist(m_RMin,m_RMax); 
+    std::uniform_real_distribution<double> dist_2(0,1); 
+    std::normal_distribution<double> distribution(0,sigma);
+    double x_i = dist(generator);
+
+    for(int i=0; i< NumSamples; i++){
+    double y = distribution(generator);
+    double A = callFunction(y)/callFunction(x_i);
+    if (A > 1){
+      A = 1;
+    }
+    double T = dist_2(generator);
+    if(T > A){
+      i--;
+      continue;
+    }
+    else{
+      SampledPoints.push_back(y);
+      x_i = y;
+    }
+  }
+  return SampledPoints;
+  }
 
 /*
 ###################
@@ -63,7 +96,12 @@ Integration by hand (output needed to normalise function when plotting)
 */ 
 double FiniteFunction::integrate(int Ndiv){ //private
   //ToDo write an integrator
-  return -99;  
+  double output = 0;
+  double step = (this->rangeMax() - this->rangeMin())/Ndiv;
+  for( double i = this->rangeMin(); i < this->rangeMax(); i+= step){
+    output += this->callFunction(i)*step;
+  }
+  return output;  
 }
 double FiniteFunction::integral(int Ndiv) { //public
   if (Ndiv <= 0){
